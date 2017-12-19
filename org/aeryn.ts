@@ -43,18 +43,13 @@ So, we've sent you an org invite - thanks :tada:
     teamID = orgTeams.find((t:any) => t.name === teamName).id
   }
 
-  let isMember = true
   try {
     await danger.github.api.orgs.getTeamMembership({ 
       id: teamID, 
       username: authorLogin 
     })  
   } catch (error) {
-    isMember = false
     console.log("Looks like they're not a member, adding them.")
-  }
-  
-  if (!isMember) {
     await danger.github.api.orgs.addOrgMembership({ org, username: authorLogin, role: "member"})
     markdown(inviteMarkdown)
   }
