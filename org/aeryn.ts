@@ -38,8 +38,8 @@ So, we've sent you an org invite - thanks :tada:
       username: authorLogin 
     })
   } catch (error) {
-    console.log("Looks like they're not a member, adding them.")
-    markdown(inviteMarkdown)
-    const response = await danger.github.api.orgs.addOrgMembership({ org, username: authorLogin, role: "member"})
+    await danger.github.api.orgs.addOrgMembership({ org, username: authorLogin, role: "member" })
+    // Ideally we'd write `markdown` but it looks like the scheduler isn't working as expected here?
+    await danger.github.api.issues.createComment({ ...danger.github.thisPR, body: inviteMarkdown })
   }
 })
