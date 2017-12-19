@@ -35,7 +35,6 @@ So, we've sent you an org invite - thanks :tada:
 
   const teamResponse = await danger.github.api.orgs.getTeams({ org })
   const orgTeams = teamResponse.data
-  console.log(orgTeams)
   
   let teamID = ""
   if (orgTeams.length === 1) {
@@ -52,6 +51,7 @@ So, we've sent you an org invite - thanks :tada:
     })  
   } catch (error) {
     isMember = false
+    console.log("Looks like they're not a member, adding them.")
   }
   
   if (!isMember) {
