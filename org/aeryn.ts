@@ -21,7 +21,7 @@ export const aeryn = rfc("When a PR is merged, check if the author is in the org
   const authorLogin = pr.user.login
 
   const org = "danger"
-  const teamName = null
+  const teamName = "Huuuumans"
   const inviteMarkdown = `
 Thanks for the PR @${authorLogin}.
 
@@ -33,7 +33,8 @@ So, we've sent you an org invite - thanks :tada:
 [moya_cc]: https://github.com/Moya/contributors#readme
 `
 
-  const orgTeams = await danger.github.api.orgs.getTeams({ org })
+  const teamResponse = await danger.github.api.orgs.getTeams({ org })
+  const orgTeams = teamResponse.data
   console.log(orgTeams)
   
   let teamID = ""
