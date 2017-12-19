@@ -34,6 +34,8 @@ So, we've sent you an org invite - thanks :tada:
 `
 
   const orgTeams = await danger.github.api.orgs.getTeams({ org })
+  console.log(orgTeams)
+  
   let teamID = ""
   if (orgTeams.length === 1) {
     teamID = orgTeams[0]
