@@ -4,5 +4,5 @@
   },
   "rules": {
     "pull_request.closed": "danger/peril-settings@org/aeryn.ts"
-  },
+  }
 }
