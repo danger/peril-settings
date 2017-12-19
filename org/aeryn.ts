@@ -50,7 +50,9 @@ So, we've sent you an org invite - thanks :tada:
     })  
   } catch (error) {
     console.log("Looks like they're not a member, adding them.")
-    await danger.github.api.orgs.addOrgMembership({ org, username: authorLogin, role: "member"})
     markdown(inviteMarkdown)
+    const response = await danger.github.api.orgs.addOrgMembership({ org, username: authorLogin, role: "member"})
+    console.log(response)
+
   }
 })
