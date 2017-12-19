@@ -1,1 +1,8 @@
-{}
+{
+  "settings": {
+    "modules": ["danger-plugin-spellcheck", "danger-plugin-yarn", "@slack/client"]
+  },
+  "rules": {
+    "pull_request.closed": "danger/peril-settings@org/aeryn.ts"
+  },
+}
