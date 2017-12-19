@@ -21,7 +21,6 @@ export const aeryn = rfc("When a PR is merged, check if the author is in the org
   const authorLogin = pr.user.login
 
   const org = "danger"
-  const teamName = "Huuuumans"
   const inviteMarkdown = `
 Thanks for the PR @${authorLogin}.
 
@@ -33,26 +32,14 @@ So, we've sent you an org invite - thanks :tada:
 [moya_cc]: https://github.com/Moya/contributors#readme
 `
 
-  const teamResponse = await danger.github.api.orgs.getTeams({ org })
-  const orgTeams = teamResponse.data
-  
-  let teamID = ""
-  if (orgTeams.length === 1) {
-    teamID = orgTeams[0]
-  } else{
-    teamID = orgTeams.find((t:any) => t.name === teamName).id
-  }
-
   try {
-    await danger.github.api.orgs.getTeamMembership({ 
-      id: teamID, 
+    await danger.github.api.orgs.checkMembership({
+      org, 
       username: authorLogin 
-    })  
+    })
   } catch (error) {
     console.log("Looks like they're not a member, adding them.")
     markdown(inviteMarkdown)
     const response = await danger.github.api.orgs.addOrgMembership({ org, username: authorLogin, role: "member"})
-    console.log(response)
-
   }
 })
