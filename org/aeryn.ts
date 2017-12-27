@@ -3,6 +3,8 @@ import { schedule, danger, markdown } from "danger"
 declare const peril: any // danger/danger#351
 const isJest = typeof jest !== "undefined"
 
+console.log("ThisPR: ", danger.github.thisPR)
+
 // Stores the parameter in a closure that can be invoked in tests.
 const storeRFC = (reason: string, closure: () => void | Promise<any>) =>
   // We return a closure here so that the (promise is resolved|closure is invoked)
@@ -15,8 +17,9 @@ const runRFC = (reason: string, closure: () => void | Promise<any>) =>
 
 const rfc: any = isJest ? storeRFC : runRFC
 
+console.log("1")
 export const aeryn = rfc("When a PR is merged, check if the author is in the org", async () => {
-
+  console.log("2")
   const pr = danger.github.pr
   const username = pr.user.login
   const api = danger.github.api
@@ -32,12 +35,15 @@ So, we've sent you an org invite - thanks :tada:
 
 [moya_cc]: https://github.com/Moya/contributors#readme
 `
-
+console.log("3")
   try {
     await api.orgs.checkMembership({ org, username })
+    console.log("4")
   } catch (error) {
     // Ideally we'd write `markdown` but it looks like the scheduler isn't working as expected here?
+    console.log("5")
     await api.issues.createComment({ ...danger.github.thisPR, body: inviteMarkdown })
     await api.orgs.addOrgMembership({ org, username, role: "member" })
+    console.log("6")
   }
 })
