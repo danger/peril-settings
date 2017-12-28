@@ -2,7 +2,7 @@ jest.mock("danger", () => jest.fn())
 import * as danger from "danger"
 const dm = danger as any
 
-import { aeryn } from "../org/aeryn"
+import { newTag } from "../org/new_tag"
 
 beforeEach(() => {
   dm.fail = jest.fn()
@@ -10,14 +10,7 @@ beforeEach(() => {
 
 it("fails when there's no PR body", () => {
   dm.danger = { github: { pr: { body: "" } } }
-  return aeryn().then(() => {
+  return newTag().then(() => {
     expect(dm.fail).toHaveBeenCalledWith("Please add a description to your PR.")
-  })
-})
-
-it("does nothing when there's a PR body", () => {
-  dm.danger = { github: { pr: { body: "Hello world" } } }
-  return aeryn().then(() => {
-    expect(dm.fail).not.toHaveBeenCalled()
   })
 })

@@ -1,4 +1,5 @@
 import { schedule, danger, markdown } from "danger"
+import {Create} from "github-webhook-event-types"
 
 declare const peril: any // danger/danger#351
 const isJest = typeof jest !== "undefined"
@@ -14,27 +15,28 @@ const runRFC = (reason: string, closure: () => void | Promise<any>) => schedule(
 
 const rfc: any = isJest ? storeRFC : runRFC
 
-rfc("When a PR is merged, check if the author is in the org", async () => {
-  const pr = danger.github.pr
-  const username = pr.user.login
+export const newTag = rfc("Send a comment to PRs on new tags that they have been released", async () => {
   const api = danger.github.api
+  const gh = danger.github as any as Create
+  const tag = gh.ref
 
-  const org = "danger"
+  await api.repos.compareCommits()
+
+
+  const changelogURL = gh.repository.html_url + "/master/CHANGELOG.md"
   const inviteMarkdown = `
   Thanks for the PR @${username}.
 
-  We conform to the [Moya Community Continuity Guidelines][moya_cc], which means
-  that we want to offer any contributor the ability to control their destiny.
+  This PR has been shipped in v${gh.ref} - [CHANGELOG][].
   
-  So, we've sent you an org invite - thanks :tada:
-  
-  [moya_cc]: https://github.com/Moya/contributors#readme
+  [CHANGELOG]: ${changelogURL}
   `
 
-  try {
-    await api.orgs.checkMembership({ org, username })
-  } catch (error) {
-    markdown(inviteMarkdown)
-    await api.orgs.addOrgMembership({ org, username, role: "member" })
-  }
+
+  // try {
+  //   await api.orgs.checkMembership({ org, username })
+  // } catch (error) {
+  //   markdown(inviteMarkdown)
+  //   await api.orgs.addOrgMembership({ org, username, role: "member" })
+  // }
 })
