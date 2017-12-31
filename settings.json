@@ -3,7 +3,7 @@
     "modules": ["danger-plugin-spellcheck", "danger-plugin-yarn", "@slack/client", "semver-sort"]
   },
   "rules": {
-    "create": "danger/peril-settings@org/aeryn.ts#wip_tag_update_prs",
+    "create": "danger/peril-settings@org/new_tag.ts",
     "pull_request.closed": "danger/peril-settings@org/aeryn.ts"
   }
 }
