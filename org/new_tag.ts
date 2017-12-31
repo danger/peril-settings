@@ -16,9 +16,7 @@ const runRFC = (reason: string, closure: () => void | Promise<any>) => schedule(
 
 const rfc: any = isJest ? storeRFC : runRFC
 
-// TODO:
-// * Remove mentions on PRs from tag author
-// * 7ea07170-ee5e-11e7-827d-967e155710e3
+// Note: Current WebHook for testing: 7ea07170-ee5e-11e7-827d-967e155710e3
 //
 export const newTag = rfc("Send a comment to PRs on new tags that they have been released", async () => {
   const api = danger.github.api
@@ -26,26 +24,36 @@ export const newTag = rfc("Send a comment to PRs on new tags that they have been
   const tag = gh.ref
   const thisRepo = { owner: gh.repository.owner.login, repo: gh.repository.name }
 
-  const allTags: Tag[] = await api.repos.getTags(thisRepo)
-  console.log(allTags)
-  const semvers: string[] = semverSort.asc(allTags.map(tag => tag.name))
+  // Grab all tags, should be latest ~20
+  const allTagsResponse = await api.repos.getTags(thisRepo)
+  const allTags: Tag[] = allTagsResponse.data
 
+  // Sort the tags in semver, so we can know specifically what range to
+  // work out the commits
+  const semvers: string[] = semverSort.desc(allTags.map(tag => tag.name))
   const versionIndex = semvers.findIndex(version => version === tag)
   const releaseMinusOne = semvers[versionIndex + 1]
-  console.log(`Looking between ${tag} and ${releaseMinusOne}`)
+
+  // Bail if we can't find a release
   if (!releaseMinusOne) {
     return
   }
 
-  const compareData: CompareResults = await api.repos.compareCommits({ ...thisRepo, base: releaseMinusOne, head: tag })
-  console.log("compare:", compareData)
-  const commitMessages = compareData.commits.map(c => c.commit.name)
-  const prMerges = commitMessages.filter(message => message.startsWith("Merge pull request #"))
+  // Ask for the commits
+  const compareResults = await api.repos.compareCommits({ ...thisRepo, base: releaseMinusOne, head: tag })
+  const compareData: CompareResults = compareResults.data
+
+  // Pull out all the GH crafted merge commits on a repo
   const numberExtractor = /Merge pull request #(\d*)/
+  const commitMessages = compareData.commits.map(c => c.commit.message)
+  const prMerges = commitMessages.filter(message => message && message.startsWith("Merge pull request #"))
+
+  // This is now a number array of PR ids
+  // e.g. [ 930, 934, 937, 932, 938 ]
   const prs = prMerges
     .map(msg => msg.match(numberExtractor) && msg.match(numberExtractor)![1])
-    .filter(pr => pr) as string[]
-  console.log("prs:", prs)
+    .filter(pr => pr)
+    .map((pr: any) => parseInt(pr))
 
   const changelogURL = gh.repository.html_url + "/master/CHANGELOG.md"
 
@@ -56,6 +64,17 @@ export const newTag = rfc("Send a comment to PRs on new tags that they have been
   
   [CHANGELOG]: ${changelogURL}
   `
+
+  for (const prID of prs) {
+    const prResponse = await api.pullRequests.get({ ...thisRepo, number: prID })
+    const prData = prResponse.data
+    const author = prData.user.login
+
+    // If the PR wasn't created by whoever made the tag, send them a comment saying thanks!
+    if (author !== gh.sender.login) {
+      await api.issues.createComment({ ...thisRepo, number: prID, body: inviteMarkdown(author) })
+    }
+  }
 })
 
 interface Tag {
@@ -70,7 +89,7 @@ interface Tag {
 
 interface Commit {
   commit: {
-    name: string
+    message: string
   }
 }
 
