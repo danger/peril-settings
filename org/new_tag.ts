@@ -21,6 +21,11 @@ const rfc: any = isJest ? storeRFC : runRFC
 export const newTag = rfc("Send a comment to PRs on new tags that they have been released", async () => {
   const api = danger.github.api
   const gh = (danger.github as any) as Create
+  // Branches / Repo creation can trigger this also
+  if (gh.ref_type !== "tag") {
+    return
+  }
+
   const tag = gh.ref
   const thisRepo = { owner: gh.repository.owner.login, repo: gh.repository.name }
 
