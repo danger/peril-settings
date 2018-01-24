@@ -60,12 +60,13 @@ export const newTag = rfc("Send a comment to PRs on new tags that they have been
     .filter(pr => pr)
     .map((pr: any) => parseInt(pr))
 
-  const changelogURL = gh.repository.html_url + "/master/CHANGELOG.md"
+  const changelogURL = gh.repository.html_url + "blob/master/CHANGELOG.md"
+  const displayTag = gh.ref.startsWith("v") ? gh.ref : `v${gh.ref}`
 
   const inviteMarkdown = (username: string) => `
   Thanks for the PR @${username}.
 
-  This PR has been shipped in v${gh.ref} - [CHANGELOG][].
+  This PR has been shipped in v${displayTag} - [CHANGELOG][].
   
   [CHANGELOG]: ${changelogURL}
   `
