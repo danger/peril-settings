@@ -1,11 +1,8 @@
 import { danger, fail, message, warn, peril } from "danger"
-import * as jsome from "jsome"
-
-jsome.params.colored = false
 
 if (danger.github.pr.body.includes("peril-debug")) {
   message(
-    jsome({
+    JSON.stringify({
       modified: danger.git.modified_files,
       created: danger.git.created_files,
       deleted: danger.git.deleted_files,
@@ -13,7 +10,7 @@ if (danger.github.pr.body.includes("peril-debug")) {
   )
 
   warn(
-    jsome({
+    JSON.stringify({
       peril: peril,
     })
   )
