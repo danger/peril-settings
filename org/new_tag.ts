@@ -47,6 +47,7 @@ export const newTag = rfc("Send a comment to PRs on new tags that they have been
   // Ask for the commits
   const compareResults = await api.repos.compareCommits({ ...thisRepo, base: releaseMinusOne, head: tag })
   const compareData: CompareResults = compareResults.data
+  console.log("compares")
   console.log(compareResults)
 
   // Pull out all the GH crafted merge commits on a repo
@@ -54,6 +55,8 @@ export const newTag = rfc("Send a comment to PRs on new tags that they have been
   const commitMessages = compareData.commits.map(c => c.commit.message)
   const prMerges = commitMessages.filter(message => message && message.startsWith("Merge pull request #"))
 
+  console.log("prs")
+  console.log(prMerges)
   // This is now a number array of PR ids
   // e.g. [ 930, 934, 937, 932, 938 ]
   const prs = prMerges
