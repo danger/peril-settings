@@ -47,6 +47,7 @@ export const newTag = rfc("Send a comment to PRs on new tags that they have been
   // Ask for the commits
   const compareResults = await api.repos.compareCommits({ ...thisRepo, base: releaseMinusOne, head: tag })
   const compareData: CompareResults = compareResults.data
+  console.log(compareResults)
 
   // Pull out all the GH crafted merge commits on a repo
   const numberExtractor = /Merge pull request #(\d*)/
