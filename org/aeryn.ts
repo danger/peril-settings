@@ -30,6 +30,8 @@ rfc("When a PR is merged, check if the author is in the org", async () => {
   
   [moya_cc]: https://github.com/Moya/contributors#readme
   `
+  // danger/danger-js#521
+  if ((pr.user.type as string) === "Bot") return
 
   try {
     await api.orgs.checkMembership({ org, username })
