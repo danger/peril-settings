@@ -1,6 +1,5 @@
 import { schedule, danger, markdown } from "danger"
 
-declare const peril: any // danger/danger#351
 const isJest = typeof jest !== "undefined"
 
 // Stores the parameter in a closure that can be invoked in tests.
@@ -23,7 +22,7 @@ rfc("When a PR is merged, check if the author is in the org", async () => {
   const inviteMarkdown = `
   Thanks for the PR @${username}.
 
-  We conform to the [Moya Community Continuity Guidelines][moya_cc], which means
+  The Danger org conform to the [Moya Community Continuity Guidelines][moya_cc], which means
   that we want to offer any contributor the ability to control their destiny.
   
   So, we've sent you an org invite - thanks :tada:

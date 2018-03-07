@@ -1,8 +1,8 @@
 import { schedule, danger, markdown } from "danger"
 import { Create } from "github-webhook-event-types"
+
 import * as semverSort from "semver-sort"
 
-declare const peril: any // danger/danger#351
 const isJest = typeof jest !== "undefined"
 
 // Stores the parameter in a closure that can be invoked in tests.
