@@ -2,12 +2,13 @@ import { schedule, danger, markdown } from "danger"
 import { Status } from "github-webhook-event-types"
 import { LabelLabel } from "github-webhook-event-types/source/Label"
 
-export default async () => {
+export default async (status: Status) => {
   const api = danger.github.api
-  const status = (danger.github as any) as Status
 
   if (status.state !== "success") {
-    return console.error("Not a successful state (note that you can define state in the settings.json)")
+    return console.error(
+      `Not a successful state (note that you can define state in the settings.json) - got ${status.state}`
+    )
   }
 
   // Check to see if all other statuses on the same commit are also green. E.g. is this the last green.
@@ -23,7 +24,7 @@ export default async () => {
   const searchResponse = await api.search.issues({ q: `${status.commit.sha} type:pr is:open repo:${repoString}` })
 
   // https://developer.github.com/v3/search/#search-issues
-  const prsWithCommit = searchResponse.data.map((i: any) => i.id) as number[]
+  const prsWithCommit = searchResponse.data.items.map((i: any) => i.number) as number[]
   for (const number of prsWithCommit) {
     // Get the PR labels
     const issue = await api.issues.get({ owner, repo, number })
