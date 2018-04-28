@@ -18,44 +18,52 @@ export default async (issueComment: IssueComment) => {
 
   // Only look at PR issue comments, this isn't in the type system
   if (!(issue as any).pull_request) {
+    console.error("Not a Pull Request")
     return
   }
+
+  console.log(1)
 
   // Don't do any work unless we have to
   const keywords = ["merge on green", "merge on ci green"]
   const match = keywords.find(k => issue.body.toLowerCase().includes(k))
-  if (match) {
-    // Check to see if the label has already been set
-    if (issue.labels.find(l => l.name === "Merge On Green")) {
-      return
-    }
-
-    const sender = issueComment.sender
-    const username = sender.login
-    const org = issueComment.repository.owner.login
-
-    // Check for org access, so that some rando doesn't
-    // try to merge something without permission
-    try {
-      await api.orgs.checkMembership({ org, username })
-    } catch (error) {
-      // Someone does not have permission to force a merge
-      return
-    }
-
-    // Create or re-use an existing label
-    const owner = org
-    const repo = issueComment.repository.name
-    const existingLabels = await api.issues.getLabels({ owner, repo })
-    let mergeOnGreen = existingLabels.data.find((l: Label) => l.name == "Merge On Green")
-
-    // Create the label if it doesn't exist yet
-    if (!mergeOnGreen) {
-      const newLabel = await api.issues.createLabel({ owner, repo, name: "Merge on Green", color: "36B853" })
-      mergeOnGreen = newLabel.data
-    }
-
-    // Then add the label
-    await api.issues.addLabels({ owner, repo, number: issue.id, labels: ["Merge on Green"] })
+  if (!match) {
+    console.error("Did not find any of the phrases in the issue")
+    return
   }
+
+  // Check to see if the label has already been set
+  if (issue.labels.find(l => l.name === "Merge On Green")) {
+    console.error("Already has Merge on Green")
+    return
+  }
+
+  const sender = issueComment.sender
+  const username = sender.login
+  const org = issueComment.repository.owner.login
+
+  // Check for org access, so that some rando doesn't
+  // try to merge something without permission
+  try {
+    await api.orgs.checkMembership({ org, username })
+  } catch (error) {
+    // Someone does not have permission to force a merge
+    return console.error("Sender does not have permission to merge")
+  }
+
+  // Create or re-use an existing label
+  const owner = org
+  const repo = issueComment.repository.name
+  const existingLabels = await api.issues.getLabels({ owner, repo })
+  let mergeOnGreen = existingLabels.data.find((l: Label) => l.name == "Merge On Green")
+
+  // Create the label if it doesn't exist yet
+  if (!mergeOnGreen) {
+    const newLabel = await api.issues.createLabel({ owner, repo, name: "Merge On Green", color: "36B853" })
+    mergeOnGreen = newLabel.data
+  }
+
+  // Then add the label
+  await api.issues.addLabels({ owner, repo, number: issue.id, labels: ["Merge On Green"] })
+  console.log("Updated the PR with a Merge on Green label")
 }
