@@ -62,7 +62,7 @@ export default async (issueComment: IssueComment) => {
       owner,
       repo,
       name: "Merge On Green",
-      color: "36B853",
+      color: "247A38",
       description: "A label to indicate that Peril should merge this PR when all statuses are green",
     } as any)
   }
