@@ -3,22 +3,7 @@ import { Create } from "github-webhook-event-types"
 
 import * as semverSort from "semver-sort"
 
-const isJest = typeof jest !== "undefined"
-
-// Stores the parameter in a closure that can be invoked in tests.
-const storeRFC = (reason: string, closure: () => void | Promise<any>) =>
-  // We return a closure here so that the (promise is resolved|closure is invoked)
-  // during test time and not when we call rfc().
-  () => (closure instanceof Promise ? closure : Promise.resolve(closure()))
-
-// Either schedules the promise for execution via Danger, or invokes closure.
-const runRFC = (reason: string, closure: () => void | Promise<any>) => schedule(closure)
-
-const rfc: any = isJest ? storeRFC : runRFC
-
-// Note: Current WebHook for testing: 7ea07170-ee5e-11e7-827d-967e155710e3
-//
-export const newTag = rfc("Send a comment to PRs on new tags that they have been released", async () => {
+export default async () => {
   const api = danger.github.api
   const gh = (danger.github as any) as Create
   // Branches / Repo creation can trigger this also
@@ -35,9 +20,9 @@ export const newTag = rfc("Send a comment to PRs on new tags that they have been
 
   // Sort the tags in semver, so we can know specifically what range to
   // work out the commits
-  const semvers: string[] = semverSort.desc(allTags.map(tag => tag.name))
-  const versionIndex = semvers.findIndex(version => version === tag)
-  const releaseMinusOne = semvers[versionIndex + 1]
+  const semverStrings: string[] = semverSort.desc(allTags.map(tag => tag.name))
+  const versionIndex = semverStrings.findIndex(version => version === tag)
+  const releaseMinusOne = semverStrings[versionIndex + 1]
 
   // Bail if we can't find a release
   if (!releaseMinusOne) {
@@ -66,7 +51,7 @@ export const newTag = rfc("Send a comment to PRs on new tags that they have been
   const inviteMarkdown = (username: string) => `
   Thanks for the PR @${username}.
 
-  This PR has been shipped in v${displayTag} - [CHANGELOG][].
+  This PR has been shipped in ${displayTag} - [CHANGELOG][].
   
   [CHANGELOG]: ${changelogURL}
   `
@@ -81,7 +66,7 @@ export const newTag = rfc("Send a comment to PRs on new tags that they have been
       await api.issues.createComment({ ...thisRepo, number: prID, body: inviteMarkdown(author) })
     }
   }
-})
+}
 
 interface Tag {
   name: string
@@ -89,8 +74,6 @@ interface Tag {
     sha: string
     url: string
   }
-  zipball_url: string
-  tarball_url: string
 }
 
 interface Commit {
