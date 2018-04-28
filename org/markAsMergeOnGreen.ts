@@ -14,6 +14,7 @@ interface Label {
 /** If a comment to an issue contains "Merge on Green", apply a label for it to be merged when green. */
 export default async (issueComment: IssueComment) => {
   const issue = issueComment.issue
+  const comment = issueComment.comment
   const api = danger.github.api
 
   // Only look at PR issue comments, this isn't in the type system
@@ -22,13 +23,11 @@ export default async (issueComment: IssueComment) => {
     return
   }
 
-  console.log(1)
-
   // Don't do any work unless we have to
   const keywords = ["merge on green", "merge on ci green"]
-  const match = keywords.find(k => issue.body.toLowerCase().includes(k))
+  const match = keywords.find(k => comment.body.toLowerCase().includes(k))
   if (!match) {
-    console.error("Did not find any of the phrases in the issue")
+    console.error("Did not find any of the phrases in the comment: ", comment.body.toLocaleLowerCase())
     return
   }
 
@@ -38,7 +37,7 @@ export default async (issueComment: IssueComment) => {
     return
   }
 
-  const sender = issueComment.sender
+  const sender = comment.user
   const username = sender.login
   const org = issueComment.repository.owner.login
 
@@ -55,15 +54,20 @@ export default async (issueComment: IssueComment) => {
   const owner = org
   const repo = issueComment.repository.name
   const existingLabels = await api.issues.getLabels({ owner, repo })
-  let mergeOnGreen = existingLabels.data.find((l: Label) => l.name == "Merge On Green")
+  const mergeOnGreen = existingLabels.data.find((l: Label) => l.name == "Merge On Green")
 
   // Create the label if it doesn't exist yet
   if (!mergeOnGreen) {
-    const newLabel = await api.issues.createLabel({ owner, repo, name: "Merge On Green", color: "36B853" })
-    mergeOnGreen = newLabel.data
+    const newLabel = await api.issues.createLabel({
+      owner,
+      repo,
+      name: "Merge On Green",
+      color: "36B853",
+      description: "A label to indicate that Peril should merge this PR when all statuses are green",
+    } as any)
   }
 
   // Then add the label
-  await api.issues.addLabels({ owner, repo, number: issue.id, labels: ["Merge On Green"] })
+  await api.issues.addLabels({ owner, repo, number: issue.number, labels: ["Merge On Green"] })
   console.log("Updated the PR with a Merge on Green label")
 }
