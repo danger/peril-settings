@@ -1,6 +1,6 @@
 import { danger, fail, message, warn, peril } from "danger"
 
-if (danger.github.pr.body.includes("peril-debug")) {
+if (danger.github.pr.body && danger.github.pr.body.includes("peril-debug")) {
   message(
     JSON.stringify({
       modified: danger.git.modified_files,
