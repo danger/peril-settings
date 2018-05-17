@@ -2,7 +2,7 @@
   "name": "danger-peril-settings",
   "version": "1.0.0",
   "repository": "https://github.com/danger/peril-settings",
-  "author": "Orta Therox <orta@artsymail.com>",
+  "author": "Orta Therox <orta.therox@gmail.com>",
   "license": "MIT",
   "scripts": {
     "precommit": "lint-staged"
