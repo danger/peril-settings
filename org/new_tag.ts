@@ -3,13 +3,8 @@ import { Create } from "github-webhook-event-types"
 
 import * as semverSort from "semver-sort"
 
-export default async () => {
+export default async (gh: Create) => {
   const api = danger.github.api
-  const gh = (danger.github as any) as Create
-  // Branches / Repo creation can trigger this also
-  if (gh.ref_type !== "tag") {
-    return
-  }
 
   const tag = gh.ref
   const thisRepo = { owner: gh.repository.owner.login, repo: gh.repository.name }
