@@ -3,7 +3,10 @@
     "modules": ["danger-plugin-spellcheck", "danger-plugin-yarn", "@slack/client", "semver-sort"]
   },
   "rules": {
-    "create": "danger/peril-settings@org/new_tag.ts",
+    "create (ref_type == tag)": [
+      "danger/peril-settings@org/new_tag.ts",
+      "danger/peril-settings@org/updateDangerSystems.ts"
+    ],
     "pull_request.closed": "danger/peril-settings@org/aeryn.ts",
     "pull_request": ["danger/peril-settings@org/debug.ts", "danger/peril-settings@org/changelog.ts"],
     "issue_comment": "danger/peril-settings@org/markAsMergeOnGreen.ts",
