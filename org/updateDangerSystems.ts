@@ -6,12 +6,15 @@ import fetch from "node-fetch"
 export default async (gh: Create) => {
   const gitlabProjectID = "1620437"
 
-  await fetch(`https://gitlab.com/api/v3/projects/${gitlabProjectID}/pipeline?ref=master`, {
+  await fetch(`https://gitlab.com/api/v4/projects/${gitlabProjectID}/trigger/pipeline`, {
     method: "POST",
+    body: JSON.stringify({
+      ref: "master",
+      token: peril.env.GITLAB_DEPLOY_TOKEN,
+    }),
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
-      "PRIVATE-TOKEN": peril.env.GITLAB_DEPLOY_TOKEN,
     },
   })
 }
