@@ -1,5 +1,7 @@
 ## Danger Peril Settings
 
+[What is Peril?](http://artsy.github.io/blog/2017/09/04/Introducing-Peril/)
+
 ### What is this project?
 
 This is the configuration repo for Peril on the Danger org. There is a [settings file](settings.json) and org-wide
