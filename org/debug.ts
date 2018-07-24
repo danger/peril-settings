@@ -10,9 +10,7 @@ if (danger.github.pr.body && danger.github.pr.body.includes("peril-debug")) {
   )
 
   warn(
-    JSON.stringify({
-      peril: peril,
-    })
+    "OK"
   )
 
   fail("random fail")
