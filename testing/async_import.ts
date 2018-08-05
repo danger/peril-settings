@@ -2,5 +2,6 @@
 export default async () => {
   const imported = await import("./file_to_import")
   // @ts-ignore
-  markdown(imported.importedString)
+  console.log(">>>")
+  console.log(imported.importedString)
 }
