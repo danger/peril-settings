@@ -1,4 +1,4 @@
-import { danger, schedule, markdown } from "danger"
+import { danger, markdown } from "danger"
 import { Issues } from "github-webhook-event-types"
 
 // Support checking if the issue has the same content as the issue template.
@@ -8,7 +8,7 @@ export default async (issueWebhook: Issues) => {
 
   // Grab, the issue template, it returns an empty string if a 404, so we can
   // do a check for existence
-  const template = await danger.github.utils.fileContents(".github/ISSUE_TEMPLATE.md")
+  const template = await danger.github.utils.fileContents(".github/ISSUE_TEMPLATE.md", repo.full_name)
 
   // Whitespace between code on disk vs text which comes from GitHub is different.
   // This took far too long to figure.
