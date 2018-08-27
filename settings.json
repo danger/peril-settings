@@ -18,5 +18,8 @@
   "tasks": {
     "trigger-scheduler": "danger/peril-settings@testing/trigger-scheduler.ts",
     "logger": "danger/peril-settings@testing/logger.ts"
+  },
+  "scheduler": {
+    "2 minutes": "logger"
   }
 }
