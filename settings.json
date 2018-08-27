@@ -15,8 +15,8 @@
   "tasks": {
     "trigger-scheduler": "testing/trigger-scheduler.ts",
     "logger": "testing/logger.ts"
-  },
-  "scheduler": {
-    "* */10 * * * *": "logger"
   }
+  // "scheduler": {
+  //   "* */10 * * * *": "logger"
+  // }
 }
