@@ -23,5 +23,7 @@ export default async (issueWebhook: Issues) => {
       number: issue.number,
       state: "closed",
     })
+  } else {
+    console.log("The message did not match the template.")
   }
 }
