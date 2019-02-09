@@ -1,8 +1,9 @@
-import { schedule, danger, markdown } from "danger"
+import { danger, markdown } from "danger"
+import { Issues } from "github-webhook-event-types"
 
-export default async () => {
-  const pr = danger.github.pr
-  const username = pr.user.login
+export default async (issueWebhook: Issues) => {
+  const issue = issueWebhook.issue
+  const username = issue.user.login
   const api = danger.github.api
 
   const org = "danger"
@@ -16,13 +17,12 @@ export default async () => {
   
   [moya_cc]: https://github.com/Moya/contributors#readme
   `
-  // danger/danger-js#521
-  if ((pr.user.type as string) === "Bot") return
+  if (issue.user.type === "Bot") return
 
   try {
     await api.orgs.checkMembership({ org, username })
   } catch (error) {
     markdown(inviteMarkdown)
-    await api.orgs.addOrgMembership({ org, username, role: "member" })
+    await api.orgs.addOrUpdateMembership({ org, username, role: "member" })
   }
 }

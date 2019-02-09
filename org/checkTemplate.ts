@@ -18,7 +18,7 @@ export default async (issueWebhook: Issues) => {
     )
 
     // Let's just close it.
-    await danger.github.api.issues.edit({
+    await danger.github.api.issues.update({
       ...danger.github.thisPR,
       number: issue.number,
       state: "closed",

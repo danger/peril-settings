@@ -10,7 +10,7 @@ export default async (gh: Create) => {
   const thisRepo = { owner: gh.repository.owner.login, repo: gh.repository.name }
 
   // Grab all tags, should be latest ~20
-  const allTagsResponse = await api.repos.getTags(thisRepo)
+  const allTagsResponse = await api.repos.listTags(thisRepo)
   const allTags: Tag[] = allTagsResponse.data
 
   // Sort the tags in semver, so we can know specifically what range to
@@ -52,7 +52,7 @@ export default async (gh: Create) => {
   `
 
   for (const prID of prs) {
-    const prResponse = await api.pullRequests.get({ ...thisRepo, number: prID })
+    const prResponse = await api.pulls.get({ ...thisRepo, number: prID })
     const prData = prResponse.data
     const author = prData.user.login
 

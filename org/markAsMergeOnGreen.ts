@@ -53,7 +53,7 @@ export default async (issueComment: IssueComment) => {
   // Create or re-use an existing label
   const owner = org
   const repo = issueComment.repository.name
-  const existingLabels = await api.issues.getLabels({ owner, repo })
+  const existingLabels = await api.issues.listLabelsForRepo({ owner, repo })
   const mergeOnGreen = existingLabels.data.find((l: Label) => l.name == "Merge On Green")
 
   // Create the label if it doesn't exist yet
