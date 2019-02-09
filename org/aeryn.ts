@@ -1,12 +1,14 @@
 import { danger, markdown } from "danger"
-import { Issues } from "github-webhook-event-types"
+import { PullRequest } from "github-webhook-event-types"
 
-export default async (issueWebhook: Issues) => {
-  const issue = issueWebhook.issue
-  const username = issue.user.login
+export default async (webhook: PullRequest) => {
+  const user = webhook.sender
+  if (user.type === "Bot") return
+
+  const username = user.login
   const api = danger.github.api
+  const org = webhook.repository.owner.login
 
-  const org = "danger"
   const inviteMarkdown = `
   Thanks for the PR @${username}.
 
@@ -17,7 +19,6 @@ export default async (issueWebhook: Issues) => {
   
   [moya_cc]: https://github.com/Moya/contributors#readme
   `
-  if (issue.user.type === "Bot") return
 
   try {
     await api.orgs.checkMembership({ org, username })
