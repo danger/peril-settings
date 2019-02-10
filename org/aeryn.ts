@@ -2,7 +2,7 @@ import { danger, markdown } from "danger"
 import { PullRequest } from "github-webhook-event-types"
 
 export default async (webhook: PullRequest) => {
-  const user = webhook.sender
+  const user = webhook.pull_request.user
   if (user.type === "Bot") return
 
   const username = user.login
